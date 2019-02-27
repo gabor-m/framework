@@ -15,7 +15,7 @@ class Database {
         self::$pdo = new \PDO($dsn, $db_config["username"], $db_config["password"]);
         self::$config = $db_config;
         self::$dbname = $db_config["database"];
-        self::udpateSchema();
+        self::syncSchema();
     }
     
     public static function tables() {
@@ -47,7 +47,7 @@ class Database {
         return $return_array;
     }
     
-    private static function udpateSchema() {
+    private static function syncSchema() {
         $models = Model::allModels();
         foreach ($models as $model) {
             $columns = $model::columns();
@@ -88,22 +88,59 @@ class Database {
         );
         $count = $results->rowCount();
         if ($count === 0) {
-            self::$pdo->query(
-                "ALTER TABLE " . $table_name . " ADD `"
-                . $column_name . "` " . $column_data["sql_type"]
-                . " NULL DEFAULT " . $column_data["sql_default"]
-            );
+            self::addOrModifyColumn("ADD", $column_data);
         } else {
             $result = $results->fetch(\PDO::FETCH_ASSOC);
-            if (strtolower($result["column_type"]) !== strtolower($column_data["sql_type"])
-                || $result["column_default"] !== $column_data["sql_default"]
-                || strtolower($result["is_nullable"] === "no")) {
-                self::$pdo->query(
-                    "ALTER TABLE " . $table_name . " MODIFY COLUMN `"
-                    . $column_name . "` " . $column_data["sql_type"]
-                    . " NULL DEFAULT " . $column_data["sql_default"]
-                );
+            if (self::columnTypeEquals($result["column_type"], $column_data["sql_type"])
+                    || $result["column_default"] !== $column_data["sql_default"]
+                    || strtolower($result["is_nullable"] === "no")) {
+                self::addOrModifyColumn("MODIFY COLUMN", $column_data);
             }
         }
+    }
+    
+    private static function columnTypeEquals($type1, $type2) {
+        // TODO: pl. enum esetén törölni kell a szóközöket mindkettõbõl és úgy összehasonlítani
+        return strtolower($type1) !== strtolower($type2);
+    }
+    
+    private static function addOrModifyColumn($type, $column_data) {
+        self::$pdo->query(
+            "ALTER TABLE " . $column_data["table_name"] . " " . $type . " `"
+            . $column_data["column_name"] . "` " . $column_data["sql_type"]
+            . " NULL DEFAULT " . ($column_data["sql_default"] === NULL ? "null" : self::$pdo->quote($column_data["sql_default"]))
+        );
+    }
+    
+    public static function findRecordById($table, $id) {
+        $results = self::$pdo->query(
+            'SELECT * FROM `' . $table . '` WHERE id = ' . $id
+        );
+        return $results->fetch(\PDO::FETCH_ASSOC);
+    }
+    
+    public static function updateRecordById($table, $id, $data = []) {
+        $assignments = [];
+        foreach ($data as $key => $value) {
+            $assignments[] = "`" . $key . "` = :" . $key;
+        }
+        $assignments = implode(", ", $assignments);
+        $results = self::$pdo->prepare(
+            "UPDATE " . $table
+            . " SET " . $assignments
+            . " WHERE id = " . $id);
+        $results->execute($data);
+    }
+    
+    public static function getForeignKey($table, $column) {
+        $results = self::$pdo->query(
+            "SELECT table_name,column_name,constraint_name,referenced_table_name,referenced_column_name "
+            . "FROM information_schema.key_column_usage "
+            . "WHERE table_schema = '" . self::$dbname . "' AND "
+            . "table_name = '" . $table . "' AND "
+            . "column_name = '" . $column . "'"
+        );
+        // TODO: on delete, on update (in referential_constraints table)
+        return $results->fetch(\PDO::FETCH_ASSOC);
     }
 }

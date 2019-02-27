@@ -12,10 +12,18 @@ function require_all_php_files() {
 require_all_php_files();
 
 use app\models\Test;
+use app\models\User;
+
 use app\database\Database;
 
 var_dump(\app\models\Model::allModels());
 
 Database::init();
-var_dump(Database::columns("user2"));
+$test = User::findOne(1);
+$test->username = 'gabor';
+$test->suspended = 1;
+$test->user_type = 'superadmin';
+$test->save();
+var_dump($test->asArray());
 
+var_dump(Database::getForeignKey("user", "created_by"));

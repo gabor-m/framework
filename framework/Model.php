@@ -1,8 +1,13 @@
 <?php
 namespace app\models;
 
+use app\database\Database;
+
 class Model {
     public $id;
+    public $isNewRecord = true;
+    
+    // TODO: update properties when id changed
     
     public static function tableName() {
         $a = explode("\\", get_called_class());
@@ -28,9 +33,11 @@ class Model {
         $defaults = $class_reflection->getDefaultProperties();
         $return_array = [];
         foreach ($properties as $property) {
-            if ($property->name !== "id") {
-                $doc_comment = trim(substr(substr($property->getDocComment(), 3), 0, -2));
+            $doc_comment = trim(substr(substr($property->getDocComment(), 3), 0, -2));
+            if ($property->name !== "id" && $doc_comment) {
                 $return_array[$property->name] = [
+                    "table_name" => self::tableName(),
+                    "column_name" => $property->name,
                     "type" => $doc_comment,
                     "sql_type" => self::toSqlType($doc_comment),
                     "default" => $defaults[$property->name],
@@ -42,6 +49,10 @@ class Model {
     }
     
     private static function toSqlType($type) {
+        if (ctype_upper($type[0])) {
+            // table reference
+            return "int(11)"; // foreign key
+        }
         switch ($type) {
         case "int":
             return "int(11)";
@@ -50,12 +61,15 @@ class Model {
         case "bool":
             return "tinyint(1)";
         }
+        if (strpos($type, "enum") === 0) {
+            return str_replace(" ", "", $type);
+        }
         return strtolower($type);
     }
     
     private static function toSqlDefault($default) {
         if ($default === null) {
-            return "NULL";
+            return null;
         }
         return strval($default);
     }
@@ -69,5 +83,49 @@ class Model {
             }
         }
         return $models;
+    }
+    
+    private function fillWithData() {
+        $id = $this->id;
+        $table = self::tableName();
+        $columns = self::columns();
+        $record = Database::findRecordById($table, $id);
+        if (!$record) {
+            return false;
+        }
+        foreach ($columns as $column_name => $column_data) {
+            $this->$column_name = $record[$column_name];
+        }
+        $this->isNewRecord = false; // Éles adatokkal feltöltve, tehát már nem új rekord
+        return true;
+    }
+    
+    public static function findOne($id) {
+        $this_class = get_called_class();
+        $model = new $this_class;
+        $model->id = $id;
+        $exists = $model->fillWithData();
+        if (!$exists) {
+            return null;
+        }
+        return $model;
+    }
+    
+    public function asArray($include_id = false) {
+        $data = [];
+        $columns = self::columns();
+        foreach ($columns as $column_name => $column_data) {
+            $data[$column_name] = $this->$column_name;
+        }
+        if ($include_id) {
+            $data["id"] = $this->id;
+        }
+        return $data;
+    }
+    
+    public function save() {
+        $id = $this->id;
+        $table = self::tableName();
+        Database::updateRecordById($table, $id, $this->asArray());
     }
 }
