@@ -97,6 +97,27 @@ class Database {
                 self::addOrModifyColumn("MODIFY COLUMN", $column_data);
             }
         }
+        // Foreign key
+        if ($column_data["referenced_table"]) {
+            $foreign_key = self::getForeignKey($table_name, $column_name);
+            if ($foreign_key) {
+                if ($foreign_key["referenced_table_name"] !== $column_data["referenced_table"]
+                        || $foreign_key["referenced_column_name"] !== "id") {
+                    self::$pdo->query("ALTER TABLE `" . $table_name . "` DROP FOREIGN KEY " . $foreign_key["constraint_name"]);
+                    self::addForeignKey($table_name, $column_name, $column_data["referenced_table"]);
+                }
+            } else {
+                self::addForeignKey($table_name, $column_name, $column_data["referenced_table"]);
+            }
+        }
+    }
+    
+    private static function addForeignKey($table_name, $column_name, $referenced_table) {
+        self::$pdo->query(
+            "ALTER TABLE " . $table_name . " ADD CONSTRAINT " . $table_name . "_" . $column_name . "_" . $referenced_table . "_fk "
+            . "FOREIGN KEY (" . $column_name . ") "
+            . "REFERENCES " . $referenced_table . "(id)"
+        );
     }
     
     private static function columnTypeEquals($type1, $type2) {

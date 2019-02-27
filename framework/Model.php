@@ -9,9 +9,8 @@ class Model {
     
     // TODO: update properties when id changed
     
-    public static function tableName() {
-        $a = explode("\\", get_called_class());
-        $camelcase = str_split(end($a));
+    private static function camelCaseToUndersoreCase($camelcase) {
+        $camelcase = str_split($camelcase);
         $underscore_case = "";
         foreach ($camelcase as $i => $c) {
             if ($i !== 0 && ctype_upper($c)) {
@@ -20,6 +19,12 @@ class Model {
             $underscore_case .= strtolower($c);
         }
         return $underscore_case;
+    }
+    
+    public static function tableName() {
+        $a = explode("\\", get_called_class());
+        $camelcase = end($a);
+        return self::camelCaseToUndersoreCase($camelcase);
     }
     
     public static function columns() {
@@ -33,15 +38,16 @@ class Model {
         $defaults = $class_reflection->getDefaultProperties();
         $return_array = [];
         foreach ($properties as $property) {
-            $doc_comment = trim(substr(substr($property->getDocComment(), 3), 0, -2));
-            if ($property->name !== "id" && $doc_comment) {
+            $type = trim(substr(substr($property->getDocComment(), 3), 0, -2));
+            if ($property->name !== "id" && $type) {
                 $return_array[$property->name] = [
                     "table_name" => self::tableName(),
                     "column_name" => $property->name,
-                    "type" => $doc_comment,
-                    "sql_type" => self::toSqlType($doc_comment),
+                    "type" => $type,
+                    "sql_type" => self::toSqlType($type),
                     "default" => $defaults[$property->name],
                     "sql_default" => self::toSqlDefault($defaults[$property->name]),
+                    "referenced_table" => ctype_upper($type[0]) ? self::camelCaseToUndersoreCase($type) : null,
                 ];
             }
         }
