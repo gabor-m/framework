@@ -32,6 +32,7 @@ var_dump(Database::getForeignKey("user", "created_by"));
 */
 
 $user = User::findOne(15);
-$user->id = 2;
+$user->created_by = User::findOne(4);
+$user->save();
 var_dump($user);
 

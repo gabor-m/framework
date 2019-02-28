@@ -21,7 +21,9 @@ class User extends Model {
     protected $created_at;
     
     protected function beforeSave() {
-        $this->created_at = date("Y-m-d H:i:s");
+        if ($this->isNewRecord) {
+            $this->created_at = date("Y-m-d H:i:s");
+        }
     }
 }
 

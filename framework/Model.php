@@ -21,12 +21,25 @@ class Model {
     
     public function __set($property, $value) {
         if (property_exists($this, $property)) {
+            // ID módosítása
             if ($property === "id") {
                 $this->id = $value;
                 $exists = $this->fillWithData($value);
                 if (!$exists) {
                     throw Exception("Wrong ID");
                 }
+                return;
+            }
+            // Idegen kulcs módosítása
+            if ($this->isForeignKeyColumn($property)) {
+                $column_data = $this->foreignKeyColumns()[$property];
+                $class_name = "app\\models\\" . $column_data["referenced_model"];
+                if (is_object($value) && is_a($value, $class_name)) {
+                    $this->$property = $value->id;
+                } else {
+                    $this->$property = intval($value);
+                }
+                return;
             }
             $this->$property = $value;
         }
