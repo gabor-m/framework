@@ -13,4 +13,4 @@
 - Hash alapú fájlkezelés: a feltöltések automatikusan bekerülnek egy hash alapú könytárszerkezetbe. Minden futásidőben hozzáadott fájl ide kerül. Ezeket valahogy össze is kellene kötni az adatbázissal.
 - HTML, JS, CSS tömörítés
 - Hash alapú cache-elés: főként JS és CSS fájlokra (paraméterben ?hash=ff00...)
-- Tisztán funkcionális (purely functional) controllerek: 
+- Tisztán funkcionális (purely functional) controllerek: Pl. function ($req) { return Response::json(["a"=>$req->get("a", "")]); }
