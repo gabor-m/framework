@@ -5,6 +5,8 @@ class SelectQuery {
     private $model;
     private $condition;
     private $order;
+    private $limit;
+    private $offset;
     
     public function __construct($model) {
         $this->model = $model;
@@ -25,6 +27,16 @@ class SelectQuery {
         if ($this->order) {
             $sql .= $this->generateSqlOrder();
         }
+        if ($this->limit) {
+            $sql .= " LIMIT " . strval($this->limit);
+        }
+        if ($this->offset) {
+            if (!$this->limit) {
+                $sql .= " LIMIT 18446744073709551615"; // large number
+            }
+            $sql .= " OFFSET " . strval($this->offset);
+        }
+        var_dump($sql);
         return $sql;
     }
     
@@ -74,9 +86,22 @@ class SelectQuery {
         return $this;
     }
     
+    public function limit($n) {
+        $this->limit = $n;
+        return $this;
+    }
+    
+    public function offset($n) {
+        $this->offset = $n;
+        return $this;
+    }
+    
     public function all() {
         $sql = $this->generateSqlSelect();
         $results = Database::$pdo->query($sql);
+        if (!$results) {
+            return [];
+        }
         $models = [];
         foreach ($results as $result) {
             $models[] = new $this->model($result);
@@ -94,5 +119,11 @@ class SelectQuery {
         foreach ($results as $result) {
             return intval($result);
         }
+    }
+    
+    public function paginate($page_size = 20) {
+        $query = clone $this;
+        $total = $this->count();
+        return new Pagination($query, $total, $page_size);
     }
 }

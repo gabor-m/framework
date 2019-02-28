@@ -45,9 +45,4 @@ var_dump($u);
 $u->save();
 */
 
-var_dump(User::find()->where([
-    "or",
-    ["in", "id", [1, 2, 3]],
-    ["=", "id", 4],
-])->count());
-
+var_dump(User::find()->paginate()->page(0));
