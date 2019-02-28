@@ -6,4 +6,5 @@
 - Crypto könyvtár: SHA1, SHA2, SHA3, AES, curve25519, CSRNG, EdDSA
 - Többnyelvűség támogatása
 - Debug lehetőségek: logolás, benchmark (pl. SQL lekérdezésekre) stb.
-
+- CRON-ok kezelése (legalábbis a CRON jobok leírása a kódban történjen)
+- TODO: azokat a config fájlokat, amelyek json-ban vannak, ne lehessen elérni!!
