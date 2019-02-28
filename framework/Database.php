@@ -153,6 +153,22 @@ class Database {
         $results->execute($data);
     }
     
+    public static function insertRecord($table, $data = []) {
+        $columns = [];
+        $values = [];
+        foreach ($data as $key => $value) {
+            $columns[] = "`" . $key . "`";
+            $values[] = ":" . $key;
+        }
+        $columns = implode(", ", $columns);
+        $values = implode(", ", $values);
+        $results = self::$pdo->prepare(
+            "INSERT INTO " . $table . " (" . $columns . ") VALUES (" . $values . ")"
+        );
+        $results->execute($data);
+        return self::$pdo->lastInsertId();
+    }
+    
     public static function getForeignKey($table, $column) {
         $results = self::$pdo->query(
             "SELECT table_name,column_name,constraint_name,referenced_table_name,referenced_column_name "

@@ -16,9 +16,11 @@ use app\models\User;
 
 use app\database\Database;
 
-var_dump(\app\models\Model::allModels());
+// var_dump(\app\models\Model::allModels());
 
 Database::init();
+
+/*
 $test = User::findOne(1);
 $test->username = 'gabor';
 $test->suspended = 1;
@@ -27,3 +29,7 @@ $test->save();
 var_dump($test->asArray());
 
 var_dump(Database::getForeignKey("user", "created_by"));
+*/
+
+$user = new User;
+$user->save();

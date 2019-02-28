@@ -16,6 +16,13 @@ class User extends Model {
     
     /** User */
     public $created_by;
+    
+    /** datetime */
+    public $created_at;
+    
+    public function beforeSave() {
+        $this->created_at = date("Y-m-d H:i:s");
+    }
 }
 
 ?>

@@ -130,8 +130,18 @@ class Model {
     }
     
     public function save() {
-        $id = $this->id;
         $table = self::tableName();
-        Database::updateRecordById($table, $id, $this->asArray());
+        $this->beforeSave();
+        if (!$this->id) {
+            $this->id = Database::insertRecord($table, $this->asArray());
+        } else {
+            $id = $this->id;
+            Database::updateRecordById($table, $id, $this->asArray());
+        }
+        $this->isNewRecord = false;
+    }
+    
+    protected function beforeSave() {
+        var_dump("o");
     }
 }
