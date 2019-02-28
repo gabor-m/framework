@@ -137,6 +137,9 @@ class Database {
         $results = self::$pdo->query(
             'SELECT * FROM `' . $table . '` WHERE id = ' . $id
         );
+        if (!$results) {
+            return null;
+        }
         return $results->fetch(\PDO::FETCH_ASSOC);
     }
     

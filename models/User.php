@@ -3,24 +3,24 @@ namespace app\models;
 
 class User extends Model {
     /** varchar(30) */
-    public $username;
+    protected $username;
     
     /** varchar(250) */
-    public $password_hash;
+    protected $password_hash;
     
     /** tinyint */
-    public $suspended;
+    protected $suspended;
     
     /** enum('admin', 'user', 'superadmin', 'a') */
-    public $user_type = "a";
+    protected $user_type = "a";
     
     /** User */
-    public $created_by;
+    protected $created_by;
     
     /** datetime */
-    public $created_at;
+    protected $created_at;
     
-    public function beforeSave() {
+    protected function beforeSave() {
         $this->created_at = date("Y-m-d H:i:s");
     }
 }

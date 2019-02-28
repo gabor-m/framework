@@ -4,10 +4,33 @@ namespace app\models;
 use app\database\Database;
 
 class Model {
-    public $id;
-    public $isNewRecord = true;
+    protected $id;
+    protected $isNewRecord = true;
     
-    // TODO: update properties when id changed
+    public function __get($property) {
+        if (property_exists($this, $property)) {
+            if ($this->isForeignKeyColumn($property)) {
+                $column_data = $this->foreignKeyColumns()[$property];
+                $class_name = "app\\models\\" . $column_data["referenced_model"];
+                return $class_name::findOne($this->$property);
+            }
+            return $this->$property;
+        }
+        return null;
+    }
+    
+    public function __set($property, $value) {
+        if (property_exists($this, $property)) {
+            if ($property === "id") {
+                $this->id = $value;
+                $exists = $this->fillWithData($value);
+                if (!$exists) {
+                    throw Exception("Wrong ID");
+                }
+            }
+            $this->$property = $value;
+        }
+    }
     
     private static function camelCaseToUndersoreCase($camelcase) {
         $camelcase = str_split($camelcase);
@@ -47,11 +70,28 @@ class Model {
                     "sql_type" => self::toSqlType($type),
                     "default" => $defaults[$property->name],
                     "sql_default" => self::toSqlDefault($defaults[$property->name]),
+                    "referenced_model" => ctype_upper($type[0]) ? $type : null,
                     "referenced_table" => ctype_upper($type[0]) ? self::camelCaseToUndersoreCase($type) : null,
                 ];
             }
         }
         return $return_array;
+    }
+    
+    private static function foreignKeyColumns() {
+        $refs = [];
+        $columns = self::columns();
+        foreach ($columns as $column_name => $column_data) {
+            if ($column_data["referenced_model"]) {
+                $refs[$column_name] = $column_data;
+            }
+        }
+        return $refs;
+    }
+    
+    private static function isForeignKeyColumn($column) {
+        $refs = self::foreignKeyColumns();
+        return isset($refs[$column]);
     }
     
     private static function toSqlType($type) {

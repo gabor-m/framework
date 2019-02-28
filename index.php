@@ -31,5 +31,7 @@ var_dump($test->asArray());
 var_dump(Database::getForeignKey("user", "created_by"));
 */
 
-$user = new User;
-$user->save();
+$user = User::findOne(15);
+$user->id = 2;
+var_dump($user);
+
