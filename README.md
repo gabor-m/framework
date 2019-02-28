@@ -1,7 +1,8 @@
 ﻿- Phpmyadmin alternatíva, mely a keretrendszerhez illeszkedne. Sémát módosítani nem lehet vele, csak lekérdezni és módosítani rekordokat. Ezen kívül import/export.
+- Modelleknél lekérdezések metódusokkal: Model::find()->where(...)->all() Yii2-es elnevezéseket átvéve.
 - Routing és URL kezelés
 - E-mail küldés: PHPMailer, Swift vagy saját kód
-- Automatikus admin felület a modellekből
+- Automatikus admin felület készítése a modellekből
 - Validálás: olyan megoldás kell, amely egymástól függő feltételeket is kezel
 - Crypto könyvtár: SHA1, SHA2, SHA3, AES, curve25519, CSRNG, EdDSA
 - Többnyelvűség támogatása
@@ -12,4 +13,4 @@
 - Hash alapú fájlkezelés: a feltöltések automatikusan bekerülnek egy hash alapú könytárszerkezetbe. Minden futásidőben hozzáadott fájl ide kerül. Ezeket valahogy össze is kellene kötni az adatbázissal.
 - HTML, JS, CSS tömörítés
 - Hash alapú cache-elés: főként JS és CSS fájlokra (paraméterben ?hash=ff00...)
-
+- Tisztán funkcionális (purely functional) controllerek: 
