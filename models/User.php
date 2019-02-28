@@ -21,7 +21,7 @@ class User extends Model {
     protected $created_at;
     
     /** json */
-    protected $data;
+    protected $data = '[null]';
     
     protected function beforeSave() {
         if ($this->isNewRecord) {

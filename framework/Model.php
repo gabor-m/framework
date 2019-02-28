@@ -2,10 +2,17 @@
 namespace app\models;
 
 use app\database\Database;
+use app\database\SelectQuery;
 
 class Model {
     protected $id;
     protected $isNewRecord = true;
+    
+    public function __construct($data) {
+        if (is_array($data)) {
+            $this->fill($data);
+        }
+    }
     
     public function __get($property) {
         if (property_exists($this, $property)) {
@@ -145,6 +152,9 @@ class Model {
         if ($default === null) {
             return null;
         }
+        if (is_array($default)) {
+            return json_encode($default);
+        }
         return strval($default);
     }
     
@@ -211,5 +221,16 @@ class Model {
     
     protected function beforeSave() {
         
+    }
+    
+    public function fill($data) {
+        foreach ($data as $key => $value) {
+            $this->$key = $value;
+        }
+    }
+    
+    public static function find() {
+        $class_name = get_called_class();
+        return new SelectQuery($class_name);
     }
 }

@@ -4,7 +4,7 @@ namespace app\database;
 use app\models\Model;
 
 class Database {
-    private static $pdo;
+    static $pdo;
     private static $config;
     public static $dbname;
     

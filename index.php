@@ -30,10 +30,24 @@ var_dump($test->asArray());
 
 var_dump(Database::getForeignKey("user", "created_by"));
 */
-
+/*
 $user = User::findOne(1);
 var_dump($user);
 $user->data = [5,5,5,5,[false]];
 $user->save();
 var_dump($user->data);
+
+$u = new User();
+
+var_dump($u);
+$u->data="[]";
+var_dump($u);
+$u->save();
+*/
+
+var_dump(User::find()->where([
+    "or",
+    ["in", "id", [1, 2, 3]],
+    ["=", "id", 4],
+])->count());
 
