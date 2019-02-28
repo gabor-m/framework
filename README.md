@@ -8,5 +8,5 @@
 - Debug lehetőségek: logolás, benchmark (pl. SQL lekérdezésekre) stb.
 - CRON-ok kezelése (legalábbis a CRON jobok leírása a kódban történjen egy robots.txt-hez hasonlóan)
 - TODO: azokat a config fájlokat, amelyek json-ban vannak, ne lehessen elérni!!
-- Templating
+- Templating system (standard PHP, nem kell új syntax)
 
