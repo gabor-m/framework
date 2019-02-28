@@ -20,6 +20,9 @@ class User extends Model {
     /** datetime */
     protected $created_at;
     
+    /** json */
+    protected $data;
+    
     protected function beforeSave() {
         if ($this->isNewRecord) {
             $this->created_at = date("Y-m-d H:i:s");

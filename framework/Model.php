@@ -9,10 +9,15 @@ class Model {
     
     public function __get($property) {
         if (property_exists($this, $property)) {
+            // Idegen kulcs
             if ($this->isForeignKeyColumn($property)) {
                 $column_data = $this->foreignKeyColumns()[$property];
                 $class_name = "app\\models\\" . $column_data["referenced_model"];
                 return $class_name::findOne($this->$property);
+            }
+            // JSON
+            if ($this->isJsonColumn($property)) {
+                return json_decode($this->$property, true);
             }
             return $this->$property;
         }
@@ -39,6 +44,11 @@ class Model {
                 } else {
                     $this->$property = intval($value);
                 }
+                return;
+            }
+            // JSON
+            if ($this->isJsonColumn($property)) {
+                $this->$property = json_encode($value);
                 return;
             }
             $this->$property = $value;
@@ -105,6 +115,11 @@ class Model {
     private static function isForeignKeyColumn($column) {
         $refs = self::foreignKeyColumns();
         return isset($refs[$column]);
+    }
+    
+    private static function isJsonColumn($column) {
+        $column = self::columns()[$column];
+        return $column["type"] == "json";
     }
     
     private static function toSqlType($type) {
@@ -195,6 +210,6 @@ class Model {
     }
     
     protected function beforeSave() {
-        var_dump("o");
+        
     }
 }
