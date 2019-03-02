@@ -1,7 +1,8 @@
 <?php
 
-$this->share("title", "Helloka");
-$this->extends("layout");
+$this->extends("layout", [
+    "title" => "Hellobello"
+]);
 
 ?>
 

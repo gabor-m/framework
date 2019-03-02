@@ -5,6 +5,7 @@ class View {
     private $extension = ".view";
     private $rootDir = "";
     private $globals = [];
+    private $layoutParams = [];
     public $layout = null;
     
     public function __construct() {
@@ -19,8 +20,9 @@ class View {
         $this->globals[$name] = $value;
     }
     
-    private function extends($path) {
+    private function extends($path, $layoutParams = []) {
         $this->layout = $path;
+        $this->layoutParams = $layoutParams;
     }
     
     private function escape($str) {
@@ -49,7 +51,7 @@ class View {
     public function render($path, $params = []) {
         $rendered = $this->include($path, $params);
         if ($this->layout) {
-            $rendered = $this->include($this->layout, [ "content" => $rendered ]);
+            $rendered = $this->include($this->layout, array_merge([ "content" => $rendered ], $this->layoutParams));
         }
         return $rendered;
     }
