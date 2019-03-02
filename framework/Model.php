@@ -8,12 +8,6 @@ class Model {
     protected $id;
     protected $isNewRecord = true;
     
-    public function __construct($data) {
-        if (is_array($data)) {
-            $this->fill($data);
-        }
-    }
-    
     public function __get($property) {
         if (property_exists($this, $property)) {
             // Idegen kulcs
@@ -217,9 +211,14 @@ class Model {
             Database::updateRecordById($table, $id, $this->asArray());
         }
         $this->isNewRecord = false;
+        $this->afterSave();
     }
     
     protected function beforeSave() {
+        
+    }
+    
+    protected function afterSave() {
         
     }
     

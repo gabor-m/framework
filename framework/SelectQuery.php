@@ -123,7 +123,6 @@ class SelectQuery {
     
     public function paginate($page_size = 20) {
         $query = clone $this;
-        $total = $this->count();
-        return new Pagination($query, $total, $page_size);
+        return new Pagination($query, $page_size);
     }
 }

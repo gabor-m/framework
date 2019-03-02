@@ -9,7 +9,7 @@ class Database {
     public static $dbname;
     
     public static function init() {
-        $db_config = json_decode(file_get_contents("config/db.json"), true);
+        $db_config = include("config/db.php");
         $dsn = 'mysql:dbname=' . $db_config["database"] . ';host=' . $db_config["host"]
             . ";charset=" . $db_config["charset"];
         self::$pdo = new \PDO($dsn, $db_config["username"], $db_config["password"]);

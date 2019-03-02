@@ -1,6 +1,6 @@
 <?php
 
-echo $_SERVER['REQUEST_URI'];
+// echo $_SERVER['REQUEST_URI'];
 
 function require_all_php_files() {
     $all_files = glob('./**/*.php');
@@ -15,6 +15,7 @@ use app\models\Test;
 use app\models\User;
 
 use app\database\Database;
+use app\View;
 
 // var_dump(\app\models\Model::allModels());
 
@@ -45,4 +46,12 @@ var_dump($u);
 $u->save();
 */
 
-var_dump(User::find()->paginate()->page(0));
+// var_dump(User::find()->paginate(10)->pageCount());
+
+$wtf = 5;
+
+$view = new View();
+// $view->layout = "layout.tmpl";
+echo $view->render("a.tmpl", [
+    "wtf" => $wtf,
+]);
