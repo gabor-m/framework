@@ -51,7 +51,8 @@ $u->save();
 $wtf = 5;
 
 $view = new View();
+$view->setRoot("views");
 // $view->layout = "layout.tmpl";
-echo $view->render("a.tmpl", [
+echo $view->render("a", [
     "wtf" => $wtf,
 ]);

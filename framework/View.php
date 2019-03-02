@@ -2,11 +2,17 @@
 namespace app;
 
 class View {
+    private $extension = ".view";
+    private $rootDir = "";
     private $globals = [];
     public $layout = null;
     
     public function __construct() {
         
+    }
+    
+    public function setRoot($path) {
+        $this->rootDir = $path . "/";
     }
     
     public function share($name, $value) {
@@ -22,6 +28,7 @@ class View {
     }
     
     public function include($path, $params = []) {
+        $path = $this->rootDir . $path . $this->extension;
         if (file_exists($path)) {
             foreach ($this->globals as $name => $value) {
                 $$name = $value;

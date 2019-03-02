@@ -1,11 +1,11 @@
 <?php
 
 $this->share("title", "Helloka");
-$this->extends("layout.tmpl");
+$this->extends("layout");
 
 ?>
 
-fds fd <?=$this->include("test.tmpl")?>
+fds fd <?=$this->include("test")?>
 
 <?php
 
