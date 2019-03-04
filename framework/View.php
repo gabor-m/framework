@@ -1,5 +1,5 @@
 <?php
-namespace app;
+namespace app\framework;
 
 class View {
     private $extension = ".view";

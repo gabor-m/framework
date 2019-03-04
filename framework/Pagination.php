@@ -1,5 +1,5 @@
 <?php
-namespace app\database;
+namespace app\framework;
 
 class Pagination {
     private $query;

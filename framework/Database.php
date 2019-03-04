@@ -1,7 +1,5 @@
 <?php
-namespace app\database;
-
-use app\models\Model;
+namespace app\framework;
 
 class Database {
     static $pdo;

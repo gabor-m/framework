@@ -1,7 +1,6 @@
 <?php
-namespace app\models;
+namespace app\framework;
 
-use app\database\Database;
 use app\database\SelectQuery;
 
 class Model {

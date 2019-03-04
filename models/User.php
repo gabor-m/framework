@@ -1,6 +1,8 @@
 <?php
 namespace app\models;
 
+use app\framework\Model;
+
 class User extends Model {
     /** varchar(30) */
     protected $username;
