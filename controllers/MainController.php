@@ -7,9 +7,7 @@ use app\framework\Response;
 class MainController extends Controller {
 
     public function index($req) {
-        return [
-            "x" => 15
-        ];
+        return Response::redirect("/");
     }
     
 }
