@@ -3,7 +3,7 @@ namespace app\framework;
 
 class View {
     private $extension = ".view";
-    private $rootDir = "";
+    private $rootDir = "views/";
     private $globals = [];
     private $layoutParams = [];
     public $layout = null;

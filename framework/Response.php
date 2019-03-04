@@ -10,6 +10,11 @@ class Response {
         
     }
     
+    public static function view($path, $params = []) {
+        $view = new View;
+        return self::html($view->render($path, $params));
+    }
+    
     public static function html($str) {
         $res = new Response;
         $res->body = $str;

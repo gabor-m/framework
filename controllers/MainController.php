@@ -7,7 +7,7 @@ use app\framework\Response;
 class MainController extends Controller {
 
     public function index($req) {
-        return Response::redirect("/");
+        return Response::view("test");
     }
     
 }

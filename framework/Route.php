@@ -28,6 +28,11 @@ class Route {
         }
     }
     
+    private static function test_url() {
+        $parsed_url = parse_url($_SERVER['REQUEST_URI']);
+        $path = $parsed_url["path"];
+    }
+    
     public static function performAction() {
         $parsed_url = parse_url($_SERVER['REQUEST_URI']);
         $path = $parsed_url["path"];
@@ -36,14 +41,12 @@ class Route {
             if ($rule["url"] === $path) {
                 $action = $rule["action"];
                 $response = self::$controllers[$rule["controller"]]->$action(new Request());
-                if ($response) {
-                    if (is_string($response)) {
-                        Response::html($response)->write();
-                    } else if (is_array($response)) {
-                        Response::json($response)->write();
-                    } else if (is_a($response, "app\\framework\\Response")) {
-                        $response->write();
-                    }
+                if (is_string($response)) {
+                    Response::html($response)->write();
+                } else if (is_array($response)) {
+                    Response::json($response)->write();
+                } else if (is_a($response, "app\\framework\\Response")) {
+                    $response->write();
                 }
                 break;
             }
