@@ -5,6 +5,7 @@ class Response {
     protected $status = 200;
     protected $headers = [];
     protected $body = "";
+    protected $file = null;
     
     public function __construct() {
         
@@ -20,6 +21,24 @@ class Response {
         $res->body = $str;
         $res->headers["Content-Type"] = "text/html; charset=UTF-8";
         return $res;
+    }
+    
+    public static function file($hash) {
+        $path = Storage::path($hash);
+        if ($path) {
+            $res = new Response;
+            $res->header("Content-Transfer-Encoding", "Binary");
+            $res->header("Content-Length", filesize($path));
+            $res->file = $path;
+            return $res;
+        } else {
+            $res = new Response;
+            return $res->status(404)->html("File not found");
+        }
+    }
+    
+    public static function download($hash, $filename = "noname") {
+        return self::file($hash)->header("Content-Disposition", "attachment; filename=" . $filename);
     }
     
     public static function json($val) {
@@ -55,7 +74,9 @@ class Response {
         foreach ($this->headers as $key => $value) {
             header($key . ": " . $value);
         }
-        if ($this->body) {
+        if ($this->file) {
+            readfile($this->file);
+        } else if ($this->body) {
             echo $this->body;
         }
     }

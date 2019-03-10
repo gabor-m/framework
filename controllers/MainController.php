@@ -10,11 +10,7 @@ class MainController extends Controller {
 
     public function index($req) {
         // return Response::view("test");
-        
-        return [
-            "files" => $_FILES,
-            "image" => $req->file("image")->store(),
-        ];
+        return [];//Response::download("122a76d0f09a52e7cccc74d1bb10d3ff367886e7");
     }
     
     public function paramTest($req) {
