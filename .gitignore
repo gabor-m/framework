@@ -1,1 +1,3 @@
 prompt.cmd
+storage/**
+!storage/temp/.gitkeep
