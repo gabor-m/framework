@@ -11,6 +11,12 @@ class MainController extends Controller {
         return Response::view("test");
     }
     
+    public function paramTest($req) {
+        return [
+            "id" => $req->get("id"),
+            "param" => $req->get("token"),
+        ];
+    }
 }
 
 ?>

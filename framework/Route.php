@@ -28,9 +28,25 @@ class Route {
         }
     }
     
-    private static function test_url() {
-        $parsed_url = parse_url($_SERVER['REQUEST_URI']);
-        $path = $parsed_url["path"];
+    private static function match_path($pattern, $path) {
+        $names = [];
+        preg_match_all("/<([a-zA-Z][a-zA-Z0-9_]+)/", $pattern, $name_matches);
+        $name_matches = array_slice($name_matches, 1); // az elsõ match a teljes, ezért azt kihagyom
+        foreach ($name_matches[0] as $name_match) {
+            $names[] = $name_match;
+        }
+        // var_dump($names);
+        $pattern = str_replace("(", "(?:", $pattern);
+        $pattern = preg_replace("/<[a-zA-Z][a-zA-Z0-9_]+:/", "(", $pattern);
+        $pattern = str_replace(">", ")", $pattern);
+        $regex = ">^" . $pattern . "$>"; // `>` egy olyan karakter, ami nem lehet az URL-ben
+        $has_match = preg_match($regex, $path, $matches) === 1;
+        $matches = array_slice($matches, 1); // az elsõ match a teljes, ezért azt kihagyom
+        $params = [];
+        foreach ($matches as $index => $str) {
+            $params[$names[$index]] = $str;
+        }
+        return count($params) > 0 ? $params : $has_match;
     }
     
     public static function performAction() {
@@ -38,9 +54,11 @@ class Route {
         $path = $parsed_url["path"];
         $query = $_GET;
         foreach (self::$url_rules as $rule) {
-            if ($rule["url"] === $path) {
+            $params = self::match_path($rule["url"], $path);
+            if (!!$params) {
                 $action = $rule["action"];
-                $response = self::$controllers[$rule["controller"]]->$action(new Request());
+                $request = new Request($params);
+                $response = self::$controllers[$rule["controller"]]->$action($request);
                 if (is_string($response)) {
                     Response::html($response)->write();
                 } else if (is_array($response)) {
