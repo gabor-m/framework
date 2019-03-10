@@ -8,6 +8,9 @@ spl_autoload_register(function ($class_name) {
         $path = "vendor/" . $path;
     }
     require $path;
+    if (method_exists($class_name, "__load") && (new ReflectionMethod($class_name, "__load"))->isStatic()) {
+        $class_name::__load($class_name);
+    }
 });
 
 Application::init();

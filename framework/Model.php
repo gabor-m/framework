@@ -31,7 +31,7 @@ class Model {
                 $this->id = $value;
                 $exists = $this->fillWithData($value);
                 if (!$exists) {
-                    throw Exception("Wrong ID");
+                    throw new \Exception("Wrong ID");
                 }
                 return;
             }
@@ -50,6 +50,11 @@ class Model {
             if ($this->isJsonColumn($property)) {
                 $this->$property = json_encode($value);
                 return;
+            }
+            if ($this->isFileColumn($property)) {
+                if (!Storage::has($value)) {
+                    throw new \Exception("File not found");
+                }
             }
             $this->$property = $value;
         }
@@ -122,6 +127,11 @@ class Model {
         return $column["type"] == "json";
     }
     
+    private static function isFileColumn($column) {
+        $column = self::columns()[$column];
+        return $column["type"] == "file";
+    }
+    
     private static function toSqlType($type) {
         if (ctype_upper($type[0])) {
             // table reference
@@ -134,6 +144,8 @@ class Model {
             return "tinyint(1)";
         case "bool":
             return "tinyint(1)";
+        case "file":
+            return "char(40)";
         }
         if (strpos($type, "enum") === 0) {
             return str_replace(" ", "", $type);
@@ -151,6 +163,7 @@ class Model {
         return strval($default);
     }
     
+    /*
     public static function allModels() {
         $all_classes = get_declared_classes();
         $models = [];
@@ -160,6 +173,12 @@ class Model {
             }
         }
         return $models;
+    }
+    */
+    
+    private static function syncSchema() {
+        $class = get_called_class();
+        return Database::syncSchema($class);
     }
     
     private function fillWithData() {
@@ -208,6 +227,7 @@ class Model {
         } else {
             $id = $this->id;
             Database::updateRecordById($table, $id, $this->asArray());
+            var_dump(Database::error());
         }
         $this->isNewRecord = false;
         $this->afterSave();
@@ -230,5 +250,11 @@ class Model {
     public static function find() {
         $class_name = get_called_class();
         return new SelectQuery($class_name);
+    }
+    
+    public static function __load($class) {
+        if ($class && $class !== "app\\framework\\Model") {
+            $class::syncSchema();
+        }
     }
 }

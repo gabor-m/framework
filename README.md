@@ -14,3 +14,4 @@
 - HTML, JS, CSS tömörítés
 - Hash alapú cache-elés: főként JS és CSS fájlokra (paraméterben ?hash=ff00...)
 - Tisztán funkcionális (purely functional) controllerek: Pl. function ($req) { return Response::json(["a"=>$req->get("a", "")]); }
+- lazy db init: csak akkor fusson le a db init, ha feltétlenül szükséges

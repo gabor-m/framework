@@ -13,7 +13,6 @@ class Database {
         self::$pdo = new \PDO($dsn, $db_config["username"], $db_config["password"]);
         self::$config = $db_config;
         self::$dbname = $db_config["database"];
-        self::syncSchema();
     }
     
     public static function tables() {
@@ -45,17 +44,14 @@ class Database {
         return $return_array;
     }
     
-    private static function syncSchema() {
-        $models = Model::allModels();
-        foreach ($models as $model) {
-            $columns = $model::columns();
-            $table_name = $model::tableName();
-            self::syncTable($table_name);
-            self::syncId($table_name);
-            foreach ($columns as $column_name => $column_data) {
-                if ($column_name !== "id") {
-                    self::syncColumn($table_name, $column_name, $column_data);
-                }
+    public static function syncSchema($model) {
+        $columns = $model::columns();
+        $table_name = $model::tableName();
+        self::syncTable($table_name);
+        self::syncId($table_name);
+        foreach ($columns as $column_name => $column_data) {
+            if ($column_name !== "id") {
+                self::syncColumn($table_name, $column_name, $column_data);
             }
         }
     }
@@ -180,5 +176,9 @@ class Database {
         );
         // TODO: on delete, on update (in referential_constraints table)
         return $results->fetch(\PDO::FETCH_ASSOC);
+    }
+    
+    public static function error() {
+        return self::$pdo->errorInfo();
     }
 }

@@ -25,6 +25,9 @@ class User extends Model {
     /** json */
     protected $data = '[null]';
     
+    /** file */
+    protected $profile_pic;
+    
     protected function beforeSave() {
         if ($this->isNewRecord) {
             $this->created_at = date("Y-m-d H:i:s");
