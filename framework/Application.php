@@ -2,6 +2,7 @@
 namespace app\framework;
 
 class Application {
+    /*
     public static function load_modules() {
         foreach (glob("modules/*") as $dir) {
             if (is_dir($dir)) {
@@ -12,6 +13,7 @@ class Application {
             }
         }
     }
+    */
     
     public static function init() {
         // DB

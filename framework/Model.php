@@ -163,6 +163,7 @@ class Model {
         return strval($default);
     }
     
+    /*
     public static function allModels() {
         $all_classes = get_declared_classes();
         $models = [];
@@ -173,6 +174,7 @@ class Model {
         }
         return $models;
     }
+    */
     
     private static function syncSchema() {
         $class = get_called_class();
