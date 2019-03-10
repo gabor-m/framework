@@ -17,6 +17,14 @@ class Request {
             return $default;
         }
     }
+    
+    public function post($name, $default = "") {
+        if (isset($_POST[$name])) {
+            return $_POST[$name];
+        } else {
+            return $default;
+        }
+    }
 }
 
 ?>
