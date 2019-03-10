@@ -15,7 +15,11 @@ class Route {
     
     private static function addRule($method, $url, $action) {
         $action_parts = explode("@", $action);
-        $controller = "app\\controllers\\" . str_replace("/", "\\", $action_parts[0]);
+        if (substr($action_parts[0], 0, 4) === "app/") {
+            $controller = str_replace("/", "\\", $action_parts[0]);
+        } else {
+            $controller = "app\\controllers\\" . str_replace("/", "\\", $action_parts[0]);
+        }
         $action = $action_parts[1];
         self::$url_rules[] = [
             "method" => $method,
