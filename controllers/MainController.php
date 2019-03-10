@@ -12,7 +12,8 @@ class MainController extends Controller {
         // return Response::view("test");
         
         return [
-            "test" => Storage::addString(""),
+            "files" => $_FILES,
+            "image" => $req->file("image")->store(),
         ];
     }
     
