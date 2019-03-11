@@ -5,12 +5,16 @@ class Route {
     private static $url_rules = [];
     private static $controllers = [];
      
-    public static function get($url, $action) {
-        self::addRule("get", $url, $action);
+    public static function get($url, ...$actions) {
+        foreach ($actions as $action) {
+            self::addRule("get", $url, $action);
+        }
     }
 
-    public static function post($url, $action) {
-        self::addRule("post", $url, $action);
+    public static function post($url, ...$actions) {
+        foreach ($actions as $action) {
+            self::addRule("post", $url, $action);
+        }
     }
     
     private static function addRule($method, $url, $action) {
@@ -63,14 +67,20 @@ class Route {
                 $action = $rule["action"];
                 $request = new Request($params);
                 $response = self::$controllers[$rule["controller"]]->$action($request);
-                if (is_string($response)) {
+                if ($response === false) {
+                    // pass. go to next rule
+                } else if (is_string($response)) {
                     Response::html($response)->write();
+                    return;
                 } else if (is_array($response)) {
                     Response::json($response)->write();
+                    return;
                 } else if (is_a($response, "app\\framework\\Response")) {
                     $response->write();
+                    return;
+                } else {
+                    return;
                 }
-                break;
             }
         }
     }

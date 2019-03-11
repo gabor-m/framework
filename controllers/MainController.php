@@ -17,6 +17,10 @@ class MainController extends Controller {
         return []; // Response::download("122a76d0f09a52e7cccc74d1bb10d3ff367886e7");
     }
     
+    public function first($req) {
+        return false;
+    }
+    
     public function paramTest($req) {
         return [
             "id" => $req->get("id"),

@@ -19,7 +19,7 @@ class Application {
         // DB
         Database::init();
         // Routes
-        self::load_modules();
+        //self::load_modules();
         require "config/route.php";
         Route::performAction();
     }
