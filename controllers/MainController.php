@@ -13,12 +13,18 @@ class MainController extends Controller {
         $user = User::findOne(1);
         $user->profile_pic = "da39a3ee5e6b4b0d3255bfef95601890afd80709";
         $user->save();
-        // return Response::view("test");
-        return []; // Response::download("122a76d0f09a52e7cccc74d1bb10d3ff367886e7");
+        return Response::view("test");
+        // return ["x" => 15]; // Response::download("122a76d0f09a52e7cccc74d1bb10d3ff367886e7");
     }
     
     public function first($req) {
-        return false;
+        if ($req->get("first", "")) {
+            return Response::html("<h1>First</h1>");
+        }
+    }
+    
+    public function url($path) {
+        
     }
     
     public function paramTest($req) {

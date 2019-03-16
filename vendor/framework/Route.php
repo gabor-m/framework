@@ -67,7 +67,7 @@ class Route {
                 $action = $rule["action"];
                 $request = new Request($params);
                 $response = self::$controllers[$rule["controller"]]->$action($request);
-                if ($response === false) {
+                if ($response === null) {
                     // pass. go to next rule
                 } else if (is_string($response)) {
                     Response::html($response)->write();

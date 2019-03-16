@@ -1,1 +1,1 @@
-<?phpuse app\models\User;$this->extends("layout", [    "title" => "Test",]);var_dump(User::findOne(1));?>
+<?phpuse app\models\User;?>@component("layout", [ "title" => "Test" ])    @php    var_dump(User::findOne(1));    @end@endcomponent

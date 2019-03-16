@@ -227,7 +227,6 @@ class Model {
         } else {
             $id = $this->id;
             Database::updateRecordById($table, $id, $this->asArray());
-            var_dump(Database::error());
         }
         $this->isNewRecord = false;
         $this->afterSave();

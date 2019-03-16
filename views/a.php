@@ -1,17 +1,13 @@
-<?php
+@component ("layout", [ "title" => "Hellobello" ])
 
-$this->extends("layout", [
-    "title" => "Hellobello"
-]);
+    fds fd @include("test")
 
-?>
+    <?php
 
-fds fd <?=$this->include("test")?>
+        $x = "sdfsd HELLO";
 
-<?php
+    ?>
 
-    $x = "sdfsd HELLO";
+    {{ $wtf }}
 
-?>
-
-<?=$wtf?>
+@endcomponent
