@@ -1,1 +1,1 @@
-<?phpuse app\models\User;?>@component("layout", [ "title" => "Test" ])    @php    var_dump(User::findOne(1));    @end@endcomponent
+<?phpuse app\models\User;?>@component("layout", [ "title" => "Test" ])    {{ $x }}    @php    var_dump(\app\models\User::findOne(1));    @end        @component("_input", ["placeholder"=>"hello"])        fds fdsf ds        fs <b>fdsfsdf</b> <u>{{ time() }}</u>    @endcomponent@endcomponent@comment    @include('a')@end

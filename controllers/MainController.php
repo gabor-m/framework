@@ -13,7 +13,9 @@ class MainController extends Controller {
         $user = User::findOne(1);
         $user->profile_pic = "da39a3ee5e6b4b0d3255bfef95601890afd80709";
         $user->save();
-        return Response::view("test");
+        return Response::view("test", [
+            "x" => 15,
+        ]);
         // return ["x" => 15]; // Response::download("122a76d0f09a52e7cccc74d1bb10d3ff367886e7");
     }
     

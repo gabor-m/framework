@@ -1,13 +1,8 @@
-@component ("layout", [ "title" => "Hellobello" ])
+{{ $x * 1000 }}
 
-    fds fd @include("test")
+<?php
+use app\models\User;
 
-    <?php
+var_dump(User::findOne(1));
 
-        $x = "sdfsd HELLO";
-
-    ?>
-
-    {{ $wtf }}
-
-@endcomponent
+?>

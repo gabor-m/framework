@@ -6,14 +6,17 @@ class TemplateRenderer {
     private $root;
     private static $base_dir = "views/";
     private static $extension = ".php";
+    public static $componentMaker;
     
     function __construct($source) {
         $this->source = $source;
         $this->root = (new TemplateParser($source))->parse();
+        if (!self::$componentMaker) {
+            self::$componentMaker = new ComponentMaker;
+        }
     }
     
-    private static function lookup($path) {
-        // $path = str_replace(".", "/", $path);
+    public static function lookup($path) {
         $path .= self::$extension;
         return file_get_contents(self::$base_dir . $path);
     }
@@ -21,13 +24,6 @@ class TemplateRenderer {
     public static function makeInclude($parent_vars, $path, $other_vars = []) {
         extract($parent_vars, EXTR_SKIP);
         extract($other_vars);
-        eval('?>' . (new TemplateRenderer(TemplateRenderer::lookup($path)))->render());
-    }
-    
-    public static function makeComponent($parent_vars, $slots, $path, $other_vars = []) {
-        // extract($parent_vars, EXTR_SKIP);
-        extract($other_vars);
-        extract($slots);
         eval('?>' . (new TemplateRenderer(TemplateRenderer::lookup($path)))->render());
     }
     
@@ -145,23 +141,18 @@ class TemplateRenderer {
     }
     
     private function renderComponent($tree) {
-        $slots = [];
-        $slot = "";
+        $str = " <?php \\app\\framework\\template\\TemplateRenderer::\$componentMaker->startComponent({$tree->param}); ?> ";
         foreach ($tree->children as $child) {
             if ($child->type === "slot") {
-                $slot_name = str_replace("'", "", $child->param);
-                $slots[$slot_name] = $this->renderSlot($child);
+                $str .= " <?php \\app\\framework\\template\\TemplateRenderer::\$componentMaker->startSlot({$child->param}); ?> ";
+                $str .= $this->renderSlot($child);
+                $str .= " <?php \\app\\framework\\template\\TemplateRenderer::\$componentMaker->endSlot(); ?> ";
             } else {
-                $slot .= $this->renderRule($child);
+                $str .= $this->renderRule($child);
             }
         }
-        $slots["slot"] = $slot;
-        $array_as_string = "[";
-        foreach ($slots as $key => $val) {
-            $array_as_string .= "'" . addslashes($key) . "'=>'" . addslashes($val) . "',";
-        }
-        $array_as_string .= "]";
-        return "<?php \\app\\framework\\template\\TemplateRenderer::makeComponent(get_defined_vars(), {$array_as_string}, {$tree->param}); ?>";
+        $str .= " <?php \\app\\framework\\template\\TemplateRenderer::\$componentMaker->endComponent(); ?> ";
+        return $str;
     }
     
     public function render() {
