@@ -38,19 +38,24 @@ class Route {
         foreach (self::$url_rules as $rule) {
             if ($rule->controllerAction === trim($action)) {
                 $url = $rule->url;
-                $url = preg_replace_callback("/<([a-zA-Z][a-zA-Z0-9_]+):([^>]+)>/", function ($matches) use ($data) {
+                $url = preg_replace_callback("/<([a-zA-Z][a-zA-Z0-9_]+):([^>]+)>/", function ($matches) use (&$data) {
                     $name = $matches[1];
                     // $pattern = $matches[2];
                     if (!isset($data[$name])) {
                         return "<missing>";
                     }
-                    return $data[$name];
+                    $replace = strval($data[$name]);
+                    unset($data[$name]);
+                    return $replace;
                 }, $url);
                 if (strpos($url, "<") !== false) {
                     throw new \Exception("Missing URL param");
                 }
                 if (substr($url, 0, 1) !== "/") {
                     throw new \Exception("Wrong URL or missing param");
+                }
+                if (count($data) > 0) {
+                    $url .= "?" . http_build_query($data);
                 }
                 return $url;
             }
