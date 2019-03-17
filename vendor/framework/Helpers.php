@@ -19,6 +19,16 @@ class Helpers {
         ]);
         file_get_contents($url, false, $stream_ctx);
     }
+    
+    public static function protectedCall($callback) {
+        try {
+            @$callback();
+        } catch (Throwable $e) {
+            // PHP 7
+        } catch (Exception $e) {
+            // PHP 5
+        }
+    }
 }
 
 ?>

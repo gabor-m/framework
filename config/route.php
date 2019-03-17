@@ -1,6 +1,6 @@
 <?php
 use app\framework\Route;
-use app\framework\Cron;
+use app\framework\cron\Cron;
 
 Route::get(".*", "MainController@first");
 Route::get("/test", "MainController@index");

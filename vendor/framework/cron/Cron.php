@@ -1,8 +1,12 @@
 <?php
-namespace app\framework;
+namespace app\framework\cron;
+
+use app\framework\Route;
+use app\framework\Helpers;
 
 class Cron {
     public static $sleep = 10; // 10 sec
+    private static $jobs = [];
     
     public static function lastTick() {
         if (!file_exists("last_cron_tick")) {
@@ -23,7 +27,7 @@ class Cron {
         $now = time();
         $diff = $now - $last_tick;
         if ($diff > 60 || $diff < 0) { // ha kisebb mint 0, akkor inkonzisztens
-            $tick_url = Helpers::absoluteRootUrl() . Route::to("app/framework/CronController@tick");
+            $tick_url = Helpers::absoluteRootUrl() . Route::to("app/framework/cron/CronController@tick");
             Helpers::fetch($tick_url, 0.1); // 0.1 sec
         }
     }
@@ -32,14 +36,25 @@ class Cron {
         file_put_contents("last_cron_tick", strval(time()));
     }
     
-    public static function nextJob() {
-        // TEST job
-        // file_put_contents("storage/temp/" . strval(time()) . ".cron.tick", "pk");
+    public static function performNextJob() {
+        foreach (self::$jobs as $job) {
+            if ($job->needPerform()) {
+                $job->perform();
+                return; // perform only 1 job at once
+            }
+        }
+    }
+    
+    public static function add($callback) {
+        $job = new CronJob($callback);
+        self::$jobs[] = $job;
+        return $job;
     }
     
     public static function addRoutes() {
-        Route::get("/cron/tick", "app/framework/CronController@tick");
-        Route::get("/cron/next-job", "app/framework/CronController@nextJob");
+        Route::get("/cron/tick", "app/framework/cron/CronController@tick");
+        Route::get("/cron/next-job", "app/framework/cron/CronController@nextJob");
+        Route::get("/cron/last-tick", "app/framework/cron/CronController@lastTick");
     }
 }
 
