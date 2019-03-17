@@ -27,7 +27,7 @@ class Process {
             "data" => $json_data,
         ]);
         Helpers::protectedCall(function () {
-            Helpers::fetch($process_url, 0.5);
+            Helpers::fetch($process_url, 0.1);
         });
     }
     
