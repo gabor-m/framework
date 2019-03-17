@@ -1,4 +1,4 @@
 prompt.cmd
-cron_state
+last_cron_tick
 storage/**
 !storage/temp/.gitkeep

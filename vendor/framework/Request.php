@@ -23,6 +23,12 @@ class Request {
         }
     }
     
+    public function getJson($name, $default = null) {
+        return Helpers::protectedCall(function () use ($name) {
+            return json_decode($this->get($name));
+        }) ?: $default;
+    }
+    
     public function post($name, $default = "") {
         if (isset($_POST[$name])) {
             return $_POST[$name];

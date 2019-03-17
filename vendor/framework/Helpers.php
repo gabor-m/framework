@@ -11,7 +11,7 @@ class Helpers {
         return $scheme . $host . $port;
     }
     
-    public static function fetch($url, $timeout = 8) {
+    public static function fetch($url, $timeout = 10) {
         $stream_ctx = stream_context_create([
             'http'=> [
                 'timeout' => $timeout, // in sec
@@ -22,11 +22,13 @@ class Helpers {
     
     public static function protectedCall($callback) {
         try {
-            @$callback();
+            return @$callback();
         } catch (Throwable $e) {
             // PHP 7
+            return null;
         } catch (Exception $e) {
             // PHP 5
+            return null;
         }
     }
 }

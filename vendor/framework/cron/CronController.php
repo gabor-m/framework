@@ -8,6 +8,7 @@ use app\framework\Response;
 class CronController {
     public function tick() {
         ignore_user_abort(true);
+        set_time_limit(0);
         error_reporting(0);
         Helpers::protectedCall(function () {
             if (Cron::needTick()) { 
