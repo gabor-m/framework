@@ -7,12 +7,14 @@ class TemplateRenderer {
     private static $base_dir = "views/";
     private static $extension = ".php";
     public static $componentMaker;
+    public static $loopMaker;
     
     function __construct($source) {
         $this->source = $source;
         $this->root = (new TemplateParser($source))->parse();
         if (!self::$componentMaker) {
             self::$componentMaker = new ComponentMaker;
+            self::$loopMaker = new LoopMaker;
         }
     }
     
@@ -121,7 +123,16 @@ class TemplateRenderer {
     }
     
     private function renderForeach($tree) {
-        return "<?php foreach ({$tree->param}) { ?> {$this->renderAll($this->children)} <?php } ?>";
+        preg_match('/ *(.*) +as *(.*)$/is', $tree->param, $matches);
+        $iteration_object = trim($matches[1]);
+        $iteration_variable = trim($matches[2]);
+        $init = "\$__current_loop_data = {$iteration_object}; \\app\\framework\\template\\TemplateRenderer::\$loopMaker->addLoop(\$__current_loop_data);";
+        $iterate = "\\app\\framework\\template\\TemplateRenderer::\$loopMaker->incrementLoop(); "
+            . "\$loop = \\app\\framework\\template\\TemplateRenderer::\$loopMaker->getLastLoop();";
+        return "<?php {$init} foreach(\$__current_loop_data as {$iteration_variable}): {$iterate} ?>"
+            . " {$this->renderAll($tree->children)} "
+            . "<?php endforeach; \\app\\framework\\template\\TemplateRenderer::\$loopMaker->popLoop(); "
+            . "\$loop = \\app\\framework\\template\\TemplateRenderer::\$loopMaker->getLastLoop(); ?>";
     }
     
     private function renderBreak($tree) {

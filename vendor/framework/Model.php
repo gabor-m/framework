@@ -1,11 +1,18 @@
 <?php
 namespace app\framework;
 
-use app\database\SelectQuery;
+use app\framework\SelectQuery;
 
 class Model {
     protected $id;
     protected $isNewRecord = true;
+    
+    public function __construct($id = null) {
+        if ($id) {
+            $this->id = $id;
+            $this->fillWithData();
+        }
+    }
     
     public function __get($property) {
         if (property_exists($this, $property)) {

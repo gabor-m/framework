@@ -36,7 +36,6 @@ class SelectQuery {
             }
             $sql .= " OFFSET " . strval($this->offset);
         }
-        var_dump($sql);
         return $sql;
     }
     
@@ -104,7 +103,7 @@ class SelectQuery {
         }
         $models = [];
         foreach ($results as $result) {
-            $models[] = new $this->model($result);
+            $models[] = new $this->model($result["id"]);
         }
         return $models;
     }
