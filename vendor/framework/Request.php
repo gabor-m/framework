@@ -3,9 +3,14 @@ namespace app\framework;
 
 class Request {
     private $params = [];
-    
+    public static $currentRequest;
+        
     public function __construct($params) {
         $this->params = $params;
+    }
+    
+    public static function current() {
+        return self::$currentRequest;
     }
     
     public function get($name, $default = "") {
