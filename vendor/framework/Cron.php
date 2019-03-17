@@ -23,7 +23,7 @@ class Cron {
         $now = time();
         $diff = $now - $last_tick;
         if ($diff > 60 || $diff < 0) { // ha kisebb mint 0, akkor inkonzisztens
-            $tick_url = Helpers::absoluteRootUrl() . Route::to("CronController@tick");
+            $tick_url = Helpers::absoluteRootUrl() . Route::to("app/framework/CronController@tick");
             Helpers::fetch($tick_url, 0.1); // 0.1 sec
         }
     }
@@ -35,6 +35,11 @@ class Cron {
     public static function nextJob() {
         // TEST job
         // file_put_contents("storage/temp/" . strval(time()) . ".cron.tick", "pk");
+    }
+    
+    public static function addRoutes() {
+        Route::get("/cron/tick", "app/framework/CronController@tick");
+        Route::get("/cron/next-job", "app/framework/CronController@nextJob");
     }
 }
 
