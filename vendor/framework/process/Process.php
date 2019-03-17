@@ -26,9 +26,9 @@ class Process {
             "name" => $name,
             "data" => $json_data,
         ]);
-        Helpers::protectedCall(function () {
+        //Helpers::protectedCall(function () {
             Helpers::fetch($process_url, 0.1);
-        });
+        //});
     }
     
     public static function addRoutes() {
