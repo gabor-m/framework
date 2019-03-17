@@ -37,7 +37,7 @@ class MainController extends Controller {
         return [
             "id" => $req->get("id"),
             "param" => $req->get("token"),
-            "url" => Route::to("CronController@tick"),
+            "url" => Route::to("MainController@paramTest", ["id"=>15, "token"=>26]),
         ];
     }
 }
