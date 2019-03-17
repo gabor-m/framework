@@ -6,6 +6,7 @@ use app\framework\Response;
 use app\framework\Mail;
 use app\framework\Storage;
 use app\models\User;
+use app\framework\Route;
 
 class MainController extends Controller {
 
@@ -14,7 +15,7 @@ class MainController extends Controller {
         $user->profile_pic = "da39a3ee5e6b4b0d3255bfef95601890afd80709";
         $user->save();
         $users = User::find()->all();
-
+        
         return Response::view("test", [
             "x" => 15,
             "users" => $users,
@@ -36,6 +37,7 @@ class MainController extends Controller {
         return [
             "id" => $req->get("id"),
             "param" => $req->get("token"),
+            "url" => Route::to("CronController@tick"),
         ];
     }
 }
