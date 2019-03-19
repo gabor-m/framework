@@ -8,6 +8,7 @@ use app\framework\Storage;
 use app\models\User;
 use app\framework\Route;
 use app\framework\process\Process;
+use app\framework\Crypto;
 
 class MainController extends Controller {
 
@@ -16,7 +17,7 @@ class MainController extends Controller {
         $user->profile_pic = "da39a3ee5e6b4b0d3255bfef95601890afd80709";
         $user->save();
         $users = User::find()->all();
-        Process::spawn("test", ["message" => "Hello World"]);
+        // Process::spawn("test", ["message" => "Hello World"]);
         return Response::view("test", [
             "x" => 15,
             "users" => $users,
@@ -40,6 +41,9 @@ class MainController extends Controller {
             "param" => $req->get("token"),
             "url" => Route::to("MainController@paramTest", ["id"=>15, "token"=>26]),
             "json" => $req->getjson("json", []),
+            "cipher" => Crypto::decrypt(Crypto::encrypt([
+                "secret" => 42
+            ])),
         ];
     }
 }

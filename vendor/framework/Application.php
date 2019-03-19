@@ -5,7 +5,7 @@ use app\framework\cron\Cron;
 use app\framework\process\Process;
 
 class Application {
-    private static $settings;
+    public static $settings;
     
     public static function init() {
         self::$settings = (object) include("config/app.php");
